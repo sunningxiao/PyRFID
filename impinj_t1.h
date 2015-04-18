@@ -91,12 +91,12 @@ private:
 
     int getOnePhaseAngle(
       LLRP::CImpinjRFPhaseAngle  *pRfPhase,
-      double               *out);
+      unsigned int               *out);
 
     int
     getOnePeakRSSI (
       LLRP::CImpinjPeakRSSI      *pPeakRSSI,
-      double               *out);
+      unsigned int               *out);
 
     int
     getOneTimestamp (

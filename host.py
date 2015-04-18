@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 impinj=Impinj.CMyApplication()
-impinj.m_Verbose = 1
+impinj.m_Verbose = 0
 impinj.connect("10.104.8.108")
 
 impinj.checkConnectionStatus()
@@ -20,6 +20,12 @@ impinj.setImpinjReaderConfig()
 impinj.addROSpec()
 impinj.enableROSpec()
 impinj.startROSpec()
-impinj.awaitAndPrintReport(10)
+#impinj.awaitAndPrintReport(10)
+i=50
+while(i>0):
+	impinj.report()
+	print(impinj.rptBuf)
+	i=i-1
+
 impinj.stopROSpec()
 impinj.close()

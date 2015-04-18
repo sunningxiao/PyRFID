@@ -948,8 +948,10 @@ CMyApplication::addROSpec (void)
     ** configure to use two antennas to be compatible with
     ** our tag direction settings
     */
-    llrp_u16v_t                 AntennaIDs = llrp_u16v_t(1);
+    llrp_u16v_t                 AntennaIDs = llrp_u16v_t(2);
     AntennaIDs.m_pValue[0] = 1;
+    AntennaIDs.m_pValue[1] = 3;
+	
 
     CAISpec *                   pAISpec = new CAISpec();
     pAISpec->setAntennaIDs(AntennaIDs);
@@ -1499,10 +1501,10 @@ CMyApplication::printTagReportData (
  *
  */
 
-	int written=0;
+	//int written=0;
 	char *ptr=rptBuf;
-	written = sprintf(ptr,"nEntry=%d\n",nEntry);
-	ptr += written;
+	//written = sprintf(ptr,"nEntry=%d\n",nEntry);
+	//ptr += written;
     for(
         Cur = pRO_ACCESS_REPORT->beginTagReportData();
         Cur != pRO_ACCESS_REPORT->endTagReportData();
@@ -1661,13 +1663,14 @@ CMyApplication::formatOneEPC (
 int 
 CMyApplication::getOnePhaseAngle(
       CImpinjRFPhaseAngle  *pRfPhase,
-      double               *out)
+      unsigned int               *out)
 {
     if(NULL != pRfPhase)
     {
         llrp_u16_t phase = pRfPhase->getPhaseAngle();
-        *out = ((double) phase  * 360)/4096;
-        return 1;
+        //*out = ((double) phase  * 360)/4096;
+        *out = (unsigned int) phase;
+		return 1;
     }
     return 0;
 }
@@ -1683,13 +1686,14 @@ CMyApplication::getOnePhaseAngle(
 int
 CMyApplication::getOnePeakRSSI (
   CImpinjPeakRSSI      *pPeakRSSI,
-  double               *out)
+  unsigned int               *out)
 {
     if(NULL != pPeakRSSI)
     {
         llrp_s16_t rssival = pPeakRSSI->getRSSI();
-        *out = ((double) rssival / 100);
-        return 1;
+        //*out = ((double) rssival / 100);
+        *out = (unsigned int) rssival;
+		return 1;
     }
     return 0;
 }
@@ -1881,8 +1885,8 @@ CMyApplication::printOneTagReportData (
     int                         written;
     unsigned long long          time;
     unsigned short              antenna, channelIndex;
-    double                      rssi, phase, velocityInst;
-
+    //double                      rssi, phase, velocityInst;
+	unsigned int				rssi,phase;
     /* this is static to keep a moving average of velocity */
     static double               velocity = 0;
     std::list<CParameter *>::iterator Cur;
@@ -1933,7 +1937,8 @@ CMyApplication::printOneTagReportData (
         {
             if(getOnePhaseAngle((CImpinjRFPhaseAngle*) *Cur, &phase))
             {
-                written = snprintf(ptr, len, " ph=%+04d", (int) phase);
+               // written = snprintf(ptr, len, " ph=%+04d", (int) phase);
+                written = snprintf(ptr, len, " ph=%u", phase);
                 ptr += written;
                 len -= written;
             }
@@ -1941,7 +1946,8 @@ CMyApplication::printOneTagReportData (
         {
             if (getOnePeakRSSI((CImpinjPeakRSSI*) *Cur, &rssi))
             {
-                written = snprintf(ptr, len, " rs=%+3.2f", rssi);
+                //written = snprintf(ptr, len, " rs=%+3.2f", rssi);
+				written = snprintf(ptr, len, " rs=%u", rssi);
                 ptr += written;
                 len -= written;
             }
@@ -1950,29 +1956,28 @@ CMyApplication::printOneTagReportData (
 
     /* Pauls Test code for looking at low level data */
 
-    if(estimateVelocity(&epcBuf[0], rssi, phase, channelIndex, antenna, time, &velocityInst))
-    {
-        /* keep a filtered value. Use a 1 pole IIR here for simplicity */
-        velocity = (6*velocity + 4*velocityInst)/10.0;
-
-        char *str = "  -  ";
-        if (velocity > 0.25)
-            str =   "---->";
-        if (velocity < -0.25)
-            str =   "<----";
-        
-        written =snprintf(ptr, len, " vel=%+2.2f filt=%+2.2f %s", 
-            velocityInst, velocity, str);
-        ptr += written;
-        len -= written;
-
-        /*
-         * Only print if we have a velocity estimate
-         */
-        //printf("%s\n", aBuf);
-    }
-	
-	sprintf(ptr,"\n");
+//    if(estimateVelocity(&epcBuf[0], rssi, phase, channelIndex, antenna, time, &velocityInst))
+//    {
+//        /* keep a filtered value. Use a 1 pole IIR here for simplicity */
+//        velocity = (6*velocity + 4*velocityInst)/10.0;
+//
+//        char *str = "  -  ";
+//        if (velocity > 0.25)
+//            str =   "---->";
+//        if (velocity < -0.25)
+//            str =   "<----";
+//        
+//        written =snprintf(ptr, len, " vel=%+2.2f filt=%+2.2f %s", 
+//            velocityInst, velocity, str);
+//        ptr += written;
+//        len -= written;
+//
+//        /*
+//         * Only print if we have a velocity estimate
+//         */
+//        //printf("%s\n", aBuf);
+//    }
+//	
 }
 
 
