@@ -1692,7 +1692,7 @@ CMyApplication::getOnePeakRSSI (
     {
         llrp_s16_t rssival = pPeakRSSI->getRSSI();
         //*out = ((double) rssival / 100);
-        *out = (unsigned int) rssival;
+        *out = (long) rssival;
 		return 1;
     }
     return 0;
@@ -1946,8 +1946,8 @@ CMyApplication::printOneTagReportData (
         {
             if (getOnePeakRSSI((CImpinjPeakRSSI*) *Cur, &rssi))
             {
-                //written = snprintf(ptr, len, " rs=%+3.2f", rssi);
-				written = snprintf(ptr, len, " rs=%u", rssi);
+                //written = snprintf(ptr, len, " rs=%f", rssi);
+				written = snprintf(ptr, len, " rs=%d", rssi);
                 ptr += written;
                 len -= written;
             }
